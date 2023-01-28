@@ -3,19 +3,18 @@
 # Minimum Panel Version: 0.6.0
 # ----------------------------------
 
-FROM ubuntu:22.04
+FROM ubuntu:latest
 
-MAINTAINER Voltis, <hello@voltis.me>
+COPY entrypoint.sh /
 
-# install VSCode Server
-RUN wget -q -O- https://aka.ms/install-vscode-server/setup.sh | sh
+RUN chmod +x /entrypoint.sh
 
-RUN adduser -D -h /home/container container
+RUN apt-get update && apt-get install -y wget
 
-USER container
-ENV  USER=container HOME=/home/container
+RUN wget -q https://aka.ms/install-vscode-server/setup.sh -O /setup.sh
 
-WORKDIR /home/container
+RUN chmod +x /setup.sh
 
-COPY ./entrypoint.sh /entrypoint.sh
-CMD ["/bin/bash", "/entrypoint.sh"]
+RUN /setup.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
